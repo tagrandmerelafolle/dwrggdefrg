@@ -709,15 +709,17 @@ Joueur 6</textarea>
                 const normalizedRotation = currentRotation % 360;
                 const sliceAngle = 360 / categories.length;
 
-                // La flèche pointe vers le haut (90° par rapport à la droite)
-                // On ajuste la rotation pour calculer le bon segment
-                const adjustedRotation = (450 - normalizedRotation) % 360;
-                const winningIndex = Math.floor(adjustedRotation / sliceAngle) % categories.length;
+                // La flèche pointe vers le haut (270° en coordonnées canvas)
+                // On calcule quel segment est sous la flèche
+                const pointerAngle = 270; // Flèche en haut
+                const segmentAtPointer = (pointerAngle - normalizedRotation + 360) % 360;
+                const winningIndex = Math.floor(segmentAtPointer / sliceAngle) % categories.length;
 
                 const winner = categories[winningIndex];
                 const prize = document.getElementById('prizeInput').value || 'Le prix mystère';
 
-                showWinnerModal(winner, prize);
+                console.log('🎰 GAGNANT:', winner);
+
                 isSpinning = false;
             }, 4000);
         }
