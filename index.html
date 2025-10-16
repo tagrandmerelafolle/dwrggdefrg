@@ -144,6 +144,8 @@
             transform: translate(-50%, -50%) scale(0.95);
         }
 
+
+
         .sidebar {
             display: flex;
             flex-direction: column;
@@ -195,52 +197,6 @@
             color: #ffd700;
         }
 
-        .winner-display {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(30, 30, 30, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px 60px;
-            text-align: center;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-            display: none;
-            z-index: 1000;
-        }
-
-        .winner-display.show {
-            display: block;
-            animation: slideIn 0.5s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .winner-display h2 {
-            font-size: 2.5em;
-            color: #ffd700;
-            margin-bottom: 20px;
-        }
-
-        .winner-text {
-            font-size: 2em;
-            background: linear-gradient(135deg, #fff, #ffd700);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: bold;
-        }
-
         @media (max-width: 1200px) {
             .main-content {
                 grid-template-columns: 1fr;
@@ -290,7 +246,7 @@ Joueur 6</textarea>
             <div class="spin-section">
                 <div class="prize-input">
                     <label>Brainrot à gagner :</label>
-                    <input type="text" id="prizeInput" placeholder="Ex: Esok Sekolah">
+                    <input type="text" id="prizeInput" placeholder="Ex: 1000 Robux">
                 </div>
                 
                 <div class="wheel-container">
@@ -318,11 +274,6 @@ Joueur 6</textarea>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="winner-display" id="winnerDisplay">
-            <h2>🎉 FÉLICITATIONS ! 🎉</h2>
-            <div class="winner-text" id="winnerText"></div>
         </div>
     </div>
 
@@ -400,7 +351,6 @@ Joueur 6</textarea>
             }
 
             isSpinning = true;
-            document.getElementById('winnerDisplay').classList.remove('show');
 
             const spins = 5 + Math.random() * 5;
             const extraDegrees = Math.random() * 360;
@@ -412,16 +362,11 @@ Joueur 6</textarea>
             setTimeout(() => {
                 const normalizedRotation = currentRotation % 360;
                 const sliceAngle = 360 / categories.length;
-                const winningIndex = Math.floor((360 - normalizedRotation) / sliceAngle) % categories.length;
-                const winner = categories[winningIndex];
                 
-                const prize = document.getElementById('prizeInput').value || 'le prix';
-                document.getElementById('winnerText').textContent = `${winner} gagne ${prize} !`;
-                document.getElementById('winnerDisplay').classList.add('show');
-                
-                setTimeout(() => {
-                    document.getElementById('winnerDisplay').classList.remove('show');
-                }, 10000);
+                // La flèche pointe vers le haut (0°), on calcule quelle section est sous la flèche
+                let winningIndex = Math.floor(normalizedRotation / sliceAngle);
+                winningIndex = categories.length - 1 - winningIndex;
+                if (winningIndex < 0) winningIndex += categories.length;
                 
                 isSpinning = false;
             }, 4000);
