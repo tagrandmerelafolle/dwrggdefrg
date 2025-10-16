@@ -400,14 +400,15 @@
 
         .boxes-wrapper {
             position: relative;
-            width: 100%;
-            max-width: 800px;
+            width: 90%;
+            max-width: 900px;
             overflow: hidden;
             padding-top: 80px;
             background: rgba(0, 0, 0, 0.3);
             border-radius: 30px;
             border: 3px solid rgba(255, 215, 0, 0.3);
             padding-bottom: 30px;
+            min-height: 250px;
         }
 
         .arrow-pointer {
@@ -439,7 +440,8 @@
             gap: 20px;
             align-items: center;
             position: relative;
-            padding: 0 400px;
+            padding: 0 50%;
+            transform: translateX(0);
         }
 
         .brainrot-box {
@@ -785,7 +787,15 @@ Joueur 6</textarea>
                         <div class="brainrot-box lose">PERDU</div>
                         <div class="brainrot-box lose">PERDU</div>
                         <div class="brainrot-box lose">PERDU</div>
+                        <div class="brainrot-box lose">PERDU</div>
+                        <div class="brainrot-box lose">PERDU</div>
                         <div class="brainrot-box win">GAGNÉ</div>
+                        <div class="brainrot-box lose">PERDU</div>
+                        <div class="brainrot-box lose">PERDU</div>
+                        <div class="brainrot-box lose">PERDU</div>
+                        <div class="brainrot-box lose">PERDU</div>
+                        <div class="brainrot-box lose">PERDU</div>
+                        <div class="brainrot-box lose">PERDU</div>
                         <div class="brainrot-box lose">PERDU</div>
                         <div class="brainrot-box lose">PERDU</div>
                         <div class="brainrot-box lose">PERDU</div>
@@ -1006,28 +1016,24 @@ Joueur 6</textarea>
             const randomNum = Math.random() * 100;
             const willWin = randomNum < winChance;
 
-            // Find winning box index (index 3)
-            const winBoxIndex = 3;
+            // Find winning box index (index 5)
+            const winBoxIndex = 5;
 
             // Calculate target position
             let targetIndex;
             if (willWin) {
                 targetIndex = winBoxIndex;
             } else {
-                // Choose random lose box (not index 3)
-                const loseIndices = [0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11];
+                // Choose random lose box (not index 5)
+                const loseIndices = [0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
                 targetIndex = loseIndices[Math.floor(Math.random() * loseIndices.length)];
             }
 
             // Calculate scroll distance
-            // We want the target box to be in the center (under the arrow)
-            const containerWidth = container.parentElement.offsetWidth;
-            const centerOffset = containerWidth / 2 - boxWidth / 2;
-
             // Add extra spins
-            const extraSpins = 3;
+            const extraSpins = 2;
             const totalBoxes = boxes.length;
-            const finalPosition = -(targetIndex * boxWidth - centerOffset + (extraSpins * totalBoxes * boxWidth));
+            const finalPosition = -((targetIndex + (extraSpins * totalBoxes)) * boxWidth);
 
             // Animate with easing
             let currentPosition = 0;
