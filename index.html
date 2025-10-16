@@ -398,11 +398,48 @@
             box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
         }
 
+        .boxes-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            overflow: hidden;
+            padding-top: 80px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 30px;
+            border: 3px solid rgba(255, 215, 0, 0.3);
+            padding-bottom: 30px;
+        }
+
+        .arrow-pointer {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 30px solid transparent;
+            border-right: 30px solid transparent;
+            border-top: 60px solid #FFD700;
+            filter: drop-shadow(0 10px 20px rgba(255, 215, 0, 0.8));
+            z-index: 10;
+            animation: arrowBounce 1.5s ease-in-out infinite;
+        }
+
+        @keyframes arrowBounce {
+            0%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            50% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+        }
+
         .boxes-container {
             display: flex;
             gap: 20px;
             align-items: center;
             position: relative;
+            padding: 0 400px;
         }
 
         .brainrot-box {
@@ -417,9 +454,9 @@
             text-transform: uppercase;
             border: 5px solid;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-            transition: all 0.5s ease;
             position: relative;
             overflow: hidden;
+            flex-shrink: 0;
         }
 
         .brainrot-box.lose {
@@ -432,36 +469,6 @@
             background: linear-gradient(135deg, #84CC16, #65A30D);
             border-color: #A3E635;
             color: #000;
-        }
-
-        .brainrot-box.selected {
-            transform: scale(1.15);
-            box-shadow: 0 15px 60px rgba(255, 215, 0, 0.8);
-            animation: pulse 0.5s ease-in-out;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1.15); }
-            50% { transform: scale(1.25); }
-        }
-
-        .pointer-top {
-            position: absolute;
-            top: -40px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-top: 40px solid #FFD700;
-            filter: drop-shadow(0 5px 15px rgba(255, 215, 0, 0.8));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .brainrot-box.selected .pointer-top {
-            opacity: 1;
         }
 
         .brainrot-spin-button {
@@ -695,6 +702,10 @@
                 height: 90px;
                 font-size: 1.3em;
             }
+
+            .boxes-wrapper {
+                max-width: 600px;
+            }
         }
     </style>
 </head>
@@ -768,22 +779,21 @@ Joueur 6</textarea>
                     <input type="text" id="userName" placeholder="Entrez le pseudo...">
                 </div>
 
-                <div class="boxes-container">
-                    <div class="brainrot-box lose" id="box1">
-                        <div class="pointer-top"></div>
-                        PERDISTE
-                    </div>
-                    <div class="brainrot-box win" id="box2">
-                        <div class="pointer-top"></div>
-                        GANASTE
-                    </div>
-                    <div class="brainrot-box lose" id="box3">
-                        <div class="pointer-top"></div>
-                        PERDISTE
-                    </div>
-                    <div class="brainrot-box lose" id="box4">
-                        <div class="pointer-top"></div>
-                        PERDISTE
+                <div class="boxes-wrapper">
+                    <div class="arrow-pointer"></div>
+                    <div class="boxes-container" id="boxesContainer">
+                        <div class="brainrot-box lose">PERDU</div>
+                        <div class="brainrot-box lose">PERDU</div>
+                        <div class="brainrot-box lose">PERDU</div>
+                        <div class="brainrot-box win">GAGNÉ</div>
+                        <div class="brainrot-box lose">PERDU</div>
+                        <div class="brainrot-box lose">PERDU</div>
+                        <div class="brainrot-box lose">PERDU</div>
+                        <div class="brainrot-box lose">PERDU</div>
+                        <div class="brainrot-box lose">PERDU</div>
+                        <div class="brainrot-box lose">PERDU</div>
+                        <div class="brainrot-box lose">PERDU</div>
+                        <div class="brainrot-box lose">PERDU</div>
                     </div>
                 </div>
 
@@ -987,54 +997,63 @@ Joueur 6</textarea>
 
             isBrainrotSpinning = true;
 
-            const boxes = [
-                document.getElementById('box1'),
-                document.getElementById('box2'),
-                document.getElementById('box3'),
-                document.getElementById('box4')
-            ];
+            const container = document.getElementById('boxesContainer');
+            const boxes = container.querySelectorAll('.brainrot-box');
+            const boxWidth = 200; // 180px + 20px gap
 
-            // Remove previous selection
-            boxes.forEach(box => box.classList.remove('selected'));
-
-            // Animation: highlight random boxes
-            let iterations = 0;
-            const maxIterations = 15;
-            const interval = setInterval(() => {
-                boxes.forEach(box => box.classList.remove('selected'));
-                const randomBox = boxes[Math.floor(Math.random() * boxes.length)];
-                randomBox.classList.add('selected');
-
-                iterations++;
-                if (iterations >= maxIterations) {
-                    clearInterval(interval);
-                    selectFinalBox(boxes);
-                }
-            }, 150);
-        }
-
-        function selectFinalBox(boxes) {
+            // Determine win or lose
             const winChance = parseInt(document.getElementById('winChance').value);
             const randomNum = Math.random() * 100;
+            const willWin = randomNum < winChance;
 
-            boxes.forEach(box => box.classList.remove('selected'));
+            // Find winning box index (index 3)
+            const winBoxIndex = 3;
 
-            let finalBox;
-            if (randomNum < winChance) {
-                // WIN - box 2 (index 1)
-                finalBox = boxes[1];
+            // Calculate target position
+            let targetIndex;
+            if (willWin) {
+                targetIndex = winBoxIndex;
             } else {
-                // LOSE - random lose box (0, 2, or 3)
-                const loseBoxes = [boxes[0], boxes[2], boxes[3]];
-                finalBox = loseBoxes[Math.floor(Math.random() * loseBoxes.length)];
+                // Choose random lose box (not index 3)
+                const loseIndices = [0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11];
+                targetIndex = loseIndices[Math.floor(Math.random() * loseIndices.length)];
             }
 
-            setTimeout(() => {
-                finalBox.classList.add('selected');
-                const result = finalBox.classList.contains('win') ? 'GAGNÉ' : 'PERDU';
-                console.log('🎰 Résultat:', result);
-                isBrainrotSpinning = false;
-            }, 500);
+            // Calculate scroll distance
+            // We want the target box to be in the center (under the arrow)
+            const containerWidth = container.parentElement.offsetWidth;
+            const centerOffset = containerWidth / 2 - boxWidth / 2;
+
+            // Add extra spins
+            const extraSpins = 3;
+            const totalBoxes = boxes.length;
+            const finalPosition = -(targetIndex * boxWidth - centerOffset + (extraSpins * totalBoxes * boxWidth));
+
+            // Animate with easing
+            let currentPosition = 0;
+            const duration = 4000; // 4 seconds
+            const startTime = Date.now();
+
+            function animate() {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+
+                // Easing function (ease out cubic)
+                const easeProgress = 1 - Math.pow(1 - progress, 3);
+
+                currentPosition = finalPosition * easeProgress;
+                container.style.transform = `translateX(${currentPosition}px)`;
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    const result = willWin ? 'GAGNÉ ✨' : 'PERDU ❌';
+                    console.log('🎰 Résultat:', result);
+                    isBrainrotSpinning = false;
+                }
+            }
+
+            animate();
         }
     </script>
 </body>
