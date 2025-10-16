@@ -290,7 +290,7 @@ Joueur 6</textarea>
             <div class="spin-section">
                 <div class="prize-input">
                     <label>Brainrot à gagner :</label>
-                    <input type="text" id="prizeInput" placeholder="Ex: Esok Sekolah">
+                    <input type="text" id="prizeInput" placeholder="Ex: 1000 Robux">
                 </div>
                 
                 <div class="wheel-container">
@@ -303,10 +303,10 @@ Joueur 6</textarea>
             <div class="right-panel">
                 <div class="panel">
                     <h2>📜 Conditions</h2>
-                    <textarea id="conditions" placeholder="Écrivez les conditions ici...">- Le gagnant doit être présent
-- Un seul gagnant par tour
-- Pas de triche autorisée
-- Amusez-vous bien !</textarea>
+                    <textarea id="conditions" placeholder="Écrivez les conditions ici...">- Donner son pseudo 
+- Etre abonné 
+- Like + Commente mes dernières videos
+- Venir avec sa vrai base !</textarea>
                 </div>
                 
                 <div class="panel">
@@ -418,6 +418,10 @@ Joueur 6</textarea>
                 const prize = document.getElementById('prizeInput').value || 'le prix';
                 document.getElementById('winnerText').textContent = `${winner} gagne ${prize} !`;
                 document.getElementById('winnerDisplay').classList.add('show');
+                
+                setTimeout(() => {
+                    document.getElementById('winnerDisplay').classList.remove('show');
+                }, 10000);
                 
                 isSpinning = false;
             }, 4000);
