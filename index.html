@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucky Spin @TiagOfficiel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+            flex-shrink: 0;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073; }
+            to { text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6; }
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 20px;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .left-panel, .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .spin-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .prize-input {
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .prize-input label {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .prize-input input {
+            padding: 8px 12px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            width: 200px;
+            background: rgba(255,255,255,0.9);
+        }
+
+        .wheel-container {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            aspect-ratio: 1;
+        }
+
+        #wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 8px solid #fff;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+        }
+
+        .pointer {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 40px solid #ff4757;
+            z-index: 10;
+            filter: drop-shadow(0 3px 6px rgba(0,0,0,0.5));
+        }
+
+        .spin-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            border: 5px solid #fff;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            color: #fff;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+            transition: transform 0.2s;
+            z-index: 10;
+        }
+
+        .spin-button:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .spin-button:active {
+            transform: translate(-50%, -50%) scale(0.95);
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel h2 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: #ffd700;
+            flex-shrink: 0;
+        }
+
+        textarea {
+            width: 100%;
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95em;
+            font-family: inherit;
+            resize: none;
+            background: rgba(255,255,255,0.9);
+        }
+
+        .info-content {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .info-item {
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .info-item strong {
+            color: #ffd700;
+        }
+
+        .winner-display {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px 60px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            display: none;
+            z-index: 1000;
+        }
+
+        .winner-display.show {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .winner-display h2 {
+            font-size: 2.5em;
+            color: #ffd700;
+            margin-bottom: 20px;
+        }
+
+        .winner-text {
+            font-size: 2em;
+            background: linear-gradient(135deg, #fff, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: bold;
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .wheel-container {
+                width: 400px;
+                height: 400px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            
+            .wheel-container {
+                width: 300px;
+                height: 300px;
+            }
+            
+            .spin-button {
+                width: 80px;
+                height: 80px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎰 Lucky Spin @TiagOfficiel 🎰</h1>
+        
+        <div class="main-content">
+            <div class="left-panel">
+                <div class="panel">
+                    <h2>📝 Catégories</h2>
+                    <textarea id="categories" placeholder="Entrez une catégorie par ligne...&#10;Exemple:&#10;Joueur 1&#10;Joueur 2&#10;Joueur 3&#10;Joueur 4">Joueur 1
+Joueur 2
+Joueur 3
+Joueur 4
+Joueur 5
+Joueur 6</textarea>
+                </div>
+            </div>
+            
+            <div class="spin-section">
+                <div class="prize-input">
+                    <label>Brainrot à gagner :</label>
+                    <input type="text" id="prizeInput" placeholder="Ex: Esok Sekolah">
+                </div>
+                
+                <div class="wheel-container">
+                    <div class="pointer"></div>
+                    <canvas id="wheel" width="500" height="500"></canvas>
+                    <button class="spin-button" onclick="spinWheel()">SPIN!</button>
+                </div>
+            </div>
+            
+            <div class="right-panel">
+                <div class="panel">
+                    <h2>📜 Conditions</h2>
+                    <textarea id="conditions" placeholder="Écrivez les conditions ici...">- Le gagnant doit être présent
+- Un seul gagnant par tour
+- Pas de triche autorisée
+- Amusez-vous bien !</textarea>
+                </div>
+                
+                <div class="panel">
+                    <h2>ℹ️ Informations</h2>
+                    <div class="info-content">
+                        <div class="info-item"><strong>Pseudo Roblox :</strong> RevenPleyy</div>
+                        <div class="info-item"><strong>Créateur :</strong> @TiagOfficiel</div>
+                        <div class="info-item"><strong>Version :</strong> 1.0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="winner-display" id="winnerDisplay">
+            <h2>🎉 FÉLICITATIONS ! 🎉</h2>
+            <div class="winner-text" id="winnerText"></div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('wheel');
+        const ctx = canvas.getContext('2d');
+        let isSpinning = false;
+        let currentRotation = 0;
+        
+        const colors = [
+            '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', 
+            '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E2',
+            '#F8B739', '#52B788', '#E63946', '#A8DADC'
+        ];
+
+        function drawWheel() {
+            const categories = document.getElementById('categories').value
+                .split('\n')
+                .filter(cat => cat.trim() !== '');
+            
+            if (categories.length === 0) {
+                ctx.fillStyle = '#ddd';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#666';
+                ctx.font = '20px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Ajoutez des catégories', canvas.width/2, canvas.height/2);
+                return;
+            }
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = canvas.width / 2 - 10;
+            const sliceAngle = (2 * Math.PI) / categories.length;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            categories.forEach((category, index) => {
+                const startAngle = index * sliceAngle;
+                const endAngle = startAngle + sliceAngle;
+
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+                ctx.closePath();
+                ctx.fillStyle = colors[index % colors.length];
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                ctx.rotate(startAngle + sliceAngle / 2);
+                ctx.textAlign = 'center';
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 18px Arial';
+                ctx.shadowColor = 'rgba(0,0,0,0.5)';
+                ctx.shadowBlur = 4;
+                ctx.fillText(category, radius * 0.65, 5);
+                ctx.restore();
+            });
+        }
+
+        function spinWheel() {
+            if (isSpinning) return;
+            
+            const categories = document.getElementById('categories').value
+                .split('\n')
+                .filter(cat => cat.trim() !== '');
+            
+            if (categories.length === 0) {
+                alert('Ajoutez des catégories avant de faire tourner la roue !');
+                return;
+            }
+
+            isSpinning = true;
+            document.getElementById('winnerDisplay').classList.remove('show');
+
+            const spins = 5 + Math.random() * 5;
+            const extraDegrees = Math.random() * 360;
+            const totalRotation = (spins * 360) + extraDegrees;
+            
+            currentRotation += totalRotation;
+            canvas.style.transform = `rotate(${currentRotation}deg)`;
+
+            setTimeout(() => {
+                const normalizedRotation = currentRotation % 360;
+                const sliceAngle = 360 / categories.length;
+                const winningIndex = Math.floor((360 - normalizedRotation) / sliceAngle) % categories.length;
+                const winner = categories[winningIndex];
+                
+                const prize = document.getElementById('prizeInput').value || 'le prix';
+                document.getElementById('winnerText').textContent = `${winner} gagne ${prize} !`;
+                document.getElementById('winnerDisplay').classList.add('show');
+                
+                isSpinning = false;
+            }, 4000);
+        }
+
+        document.getElementById('categories').addEventListener('input', drawWheel);
+
+        drawWheel();
+    </script>
+</body>
+</html>
